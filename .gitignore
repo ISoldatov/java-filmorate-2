@@ -32,7 +32,18 @@ build/
 ### VS Code ###
 .vscode/
 
+<<<<<<< HEAD
 .mvn/
 .idea/
 mvnw
 mvnw.cmd
+=======
+*.db
+db/*
+
+###Maven###
+mvnw
+mvnw.cmd
+/.idea
+.mvn/
+>>>>>>> origin/main

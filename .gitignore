@@ -44,3 +44,8 @@ build/
 
 *.db
 db/*
+
+###Maven###
+mvnw
+mvnw.cmd
+/.idea

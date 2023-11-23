@@ -5,7 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -26,6 +28,12 @@ public class FilmController {
         log.info("Обновлен Film c id={}", film.getId());
         films.computeIfPresent(film.getId(), (i, f) -> film);
         return film;
+    }
+
+    @GetMapping
+    public List<Film> getAll() {
+        log.info("Получен список всех Films");
+        return new ArrayList<>(films.values());
     }
 
 }

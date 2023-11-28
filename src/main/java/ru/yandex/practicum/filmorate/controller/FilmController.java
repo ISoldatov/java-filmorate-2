@@ -32,7 +32,7 @@ public class FilmController {
 
     @GetMapping
     public List<Film> getAll() {
-        log.info("Получен список всех Films");
+        log.debug("Получен список всех Films");
         return new ArrayList<>(films.values());
     }
 

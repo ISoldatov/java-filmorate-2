@@ -24,7 +24,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film update(Film film) {
+    public Film update(@RequestBody Film film) {
         log.info("Обновлен Film c id={}", film.getId());
         films.computeIfPresent(film.getId(), (i, f) -> film);
         return film;

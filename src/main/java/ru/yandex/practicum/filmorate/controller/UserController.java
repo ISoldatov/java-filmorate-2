@@ -25,7 +25,7 @@ public class UserController {
     }
 
     @PutMapping
-    public User update(User user) {
+    public User update(@RequestBody User user) {
         log.info("Обновлен User c id={}", user.getId());
         users.computeIfPresent(user.getId(), (i, f) -> user);
         return user;

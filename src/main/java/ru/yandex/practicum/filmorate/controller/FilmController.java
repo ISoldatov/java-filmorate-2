@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,14 +18,14 @@ public class FilmController {
     private final Map<Integer, Film> films = new HashMap<>();
 
     @PostMapping
-    public Film create(@RequestBody Film film) {
+    public Film create(@Valid @RequestBody Film film) {
         log.info("Добавлен Film c id={}", film.getId());
         films.putIfAbsent(film.getId(), film);
         return film;
     }
 
     @PutMapping
-    public Film update(@RequestBody Film film) {
+    public Film update(@Valid @RequestBody Film film) {
         log.info("Обновлен Film c id={}", film.getId());
         films.computeIfPresent(film.getId(), (i, f) -> film);
         return film;

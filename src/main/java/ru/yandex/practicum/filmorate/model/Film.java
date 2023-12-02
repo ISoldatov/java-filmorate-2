@@ -2,14 +2,15 @@ package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import ru.yandex.practicum.filmorate.util.MinimumDate;
+import lombok.EqualsAndHashCode;
+import ru.yandex.practicum.filmorate.util.annotation.MinimumDate;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
-public class Film {
-    private Integer id;
+@EqualsAndHashCode(callSuper = true)
+public class Film extends AbstractBaseEntity {
 
     @NotNull(message = "Название фильма обязательно.")
     @NotBlank(message = "Название не может быть пустым.")
@@ -20,9 +21,9 @@ public class Film {
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     @MinimumDate
-    @Past(message = "Дата релиза не может быть раньше 28 декабря 1895 года")
+    @Past(message = "Дата релиза не может быть раньше 28 декабря 1895 года.")
     private LocalDate releaseDate;
 
-    @Positive(message = "Продолжительность фильма должна быть положительным числом")
+    @Positive(message = "Продолжительность фильма должна быть положительным числом.")
     private int duration;
 }

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RestController
 @RequestMapping("/users")
@@ -17,9 +18,17 @@ public class UserController {
     public static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final Map<Integer, User> users = new HashMap<>();
 
+    private final AtomicInteger count = new AtomicInteger(0);
+
     @PostMapping
     public User create(@Valid @RequestBody User user) {
         log.info("Добавлен User c id={}", user.getId());
+        if (user.getId() == null) {
+            user.setId(count.addAndGet(1));
+        }
+        if (user.getName() == null) {
+            user.setName(user.getLogin());
+        }
         users.putIfAbsent(user.getId(), user);
         return user;
     }

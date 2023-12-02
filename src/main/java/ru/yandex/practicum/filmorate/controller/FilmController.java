@@ -34,7 +34,7 @@ public class FilmController {
     public Film update(@Valid @RequestBody Film film) {
         log.info("Обновлен Film c id={}", film.getId());
         ValidationUtil.checkNotNew(film);
-        return ValidationUtil.checkNotFound(films.computeIfPresent(film.getId(), (i, f) -> film),film.getId());
+        return ValidationUtil.checkNotFound(films.computeIfPresent(film.getId(), (i, f) -> film), film.getId());
     }
 
     @GetMapping

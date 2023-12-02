@@ -1,14 +1,18 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.SuperBuilder;
 import ru.yandex.practicum.filmorate.util.annotation.MinimumDate;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 
+
 @Data
+@SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 public class Film extends AbstractBaseEntity {
 

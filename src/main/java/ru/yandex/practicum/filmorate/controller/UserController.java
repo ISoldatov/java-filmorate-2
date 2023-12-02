@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.util.ValidationUtil;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -18,17 +19,14 @@ public class UserController {
     public static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final Map<Integer, User> users = new HashMap<>();
 
-    private final AtomicInteger count = new AtomicInteger(0);
+    private final AtomicInteger counter = new AtomicInteger(0);
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
         log.info("Добавлен User c id={}", user.getId());
-        if (user.getId() == null) {
-            user.setId(count.addAndGet(1));
-        }
-        if (user.getName() == null) {
-            user.setName(user.getLogin());
-        }
+        ValidationUtil.checkNew(user);
+        user.setId(counter.incrementAndGet());
+        checkName(user);
         users.putIfAbsent(user.getId(), user);
         return user;
     }
@@ -36,14 +34,21 @@ public class UserController {
     @PutMapping
     public User update(@Valid @RequestBody User user) {
         log.info("Обновлен User c id={}", user.getId());
-        users.computeIfPresent(user.getId(), (i, f) -> user);
-        return user;
+        ValidationUtil.checkNotNew(user);
+        checkName(user);
+        return ValidationUtil.checkNotFound(users.computeIfPresent(user.getId(), (i, f) -> user),user.getId());
     }
 
     @GetMapping
     public List<User> getAll() {
         log.debug("Получен список всех Users");
         return new ArrayList<>(users.values());
+    }
+
+    private void checkName(User user) {
+        if (user.getName() == null) {
+            user.setName(user.getLogin());
+        }
     }
 
 }

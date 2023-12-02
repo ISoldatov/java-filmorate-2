@@ -13,7 +13,6 @@ import java.time.LocalDate;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class User extends AbstractBaseEntity {
-    private Integer id;
 
     @NotNull(message = "Поле email обязательно.")
     @Email

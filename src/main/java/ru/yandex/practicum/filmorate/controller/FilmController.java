@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.util.ValidationUtil;
+import ru.yandex.practicum.filmorate.util.exception.NotFoundException;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -23,10 +24,10 @@ public class FilmController {
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        log.info("Добавлен Film c id={}", film.getId());
         ValidationUtil.checkNew(film);
         film.setId(counter.incrementAndGet());
         films.putIfAbsent(film.getId(), film);
+        log.info("Добавлен Film c id={}", film.getId());
         return film;
     }
 
@@ -35,6 +36,13 @@ public class FilmController {
         log.info("Обновлен Film c id={}", film.getId());
         ValidationUtil.checkNotNew(film);
         return ValidationUtil.checkNotFound(films.computeIfPresent(film.getId(), (i, f) -> film), film.getId());
+    }
+
+    public Film get(int id) {
+        if (!films.containsKey(id)) {
+            throw new NotFoundException(String.format("Фильм с id=%d не найден", id));
+        }
+        return films.get(id);
     }
 
     @GetMapping

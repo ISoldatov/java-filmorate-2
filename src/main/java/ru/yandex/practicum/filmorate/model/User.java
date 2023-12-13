@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.Email;
@@ -14,6 +13,8 @@ import java.time.LocalDate;
 @Data
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class User extends AbstractBaseEntity {
 
     @NotNull(message = "Поле email обязательно.")

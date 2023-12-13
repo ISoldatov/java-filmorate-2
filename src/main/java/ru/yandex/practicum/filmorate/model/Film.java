@@ -1,9 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import ru.yandex.practicum.filmorate.util.annotation.MinimumDate;
 
@@ -14,6 +12,8 @@ import java.time.LocalDate;
 @Data
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class Film extends AbstractBaseEntity {
 
     @NotNull(message = "Название фильма обязательно.")

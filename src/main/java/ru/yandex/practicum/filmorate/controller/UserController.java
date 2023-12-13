@@ -26,7 +26,7 @@ public class UserController {
         log.info("Добавлен User c id={}", user.getId());
         ValidationUtil.checkNew(user);
         user.setId(counter.incrementAndGet());
-        checkName(user);
+        checkNameEmpty(user);
         users.putIfAbsent(user.getId(), user);
         return user;
     }
@@ -35,7 +35,7 @@ public class UserController {
     public User update(@Valid @RequestBody User user) {
         log.info("Обновлен User c id={}", user.getId());
         ValidationUtil.checkNotNew(user);
-        checkName(user);
+        checkNameEmpty(user);
         return ValidationUtil.checkNotFound(users.computeIfPresent(user.getId(), (i, f) -> user),user.getId());
     }
 
@@ -45,7 +45,7 @@ public class UserController {
         return new ArrayList<>(users.values());
     }
 
-    private void checkName(User user) {
+    private void checkNameEmpty(User user) {
         if (user.getName() == null) {
             user.setName(user.getLogin());
         }

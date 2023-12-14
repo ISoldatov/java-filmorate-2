@@ -32,23 +32,27 @@ public class UserController {
     @PostMapping
     public User create(@Valid @RequestBody User user) {
         log.info("Добавлен User {}", user);
+        ValidationUtil.checkNew(user);
         return userService.create(user);
     }
 
     @PutMapping
     public User update(@Valid @RequestBody User user) {
         log.info("Обновлен User c id={}", user.getId());
+        ValidationUtil.checkNotNew(user);
         return userService.update(user);
     }
 
-    public User get(int id) {
-        return new User();
+    @GetMapping("/{id}")
+    public User get(@RequestParam int id) {
+        log.info("Получен User c id={}", id);
+        return userService.get(id);
     }
 
     @GetMapping
     public List<User> getAll() {
         log.debug("Получен список всех Users");
-        return null;
+        return userService.getAll();
     }
 
 

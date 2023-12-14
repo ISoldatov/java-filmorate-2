@@ -27,8 +27,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     public User update(User user) {
-
-        return ValidationUtil.checkNotFound(storage.computeIfPresent(user.getId(), (i, f) -> user), user.getId());
+        return storage.computeIfPresent(user.getId(), (i, oldUser) -> user);
     }
 
     @Override
@@ -38,9 +37,6 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User get(int id) {
-        if (!storage.containsKey(id)) {
-            throw new NotFoundException(String.format("User с id=%d не найден", id));
-        }
         return storage.get(id);
     }
 
@@ -48,6 +44,5 @@ public class InMemoryUserStorage implements UserStorage {
     public List<User> getAll() {
         return new ArrayList<>(storage.values());
     }
-
 
 }

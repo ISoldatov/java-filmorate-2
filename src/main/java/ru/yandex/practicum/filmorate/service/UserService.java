@@ -6,6 +6,8 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.util.ValidationUtil;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -17,16 +19,23 @@ public class UserService {
     }
 
     public User create(User user) {
-        ValidationUtil.checkNew(user);
         checkNameEmpty(user);
         return userStorage.save(user);
     }
 
     public User update(User user) {
-        ValidationUtil.checkNotNew(user);
         checkNameEmpty(user);
         return ValidationUtil.checkNotFound(userStorage.update(user), user.getId());
     }
+
+    public User get(int id) {
+        return ValidationUtil.checkNotFound(userStorage.get(id), id);
+    }
+
+    public List<User> getAll() {
+        return userStorage.getAll();
+    }
+
 
     private void checkNameEmpty(User user) {
         if (user.getName() == null) {

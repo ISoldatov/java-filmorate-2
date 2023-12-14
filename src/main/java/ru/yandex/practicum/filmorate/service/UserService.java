@@ -36,9 +36,15 @@ public class UserService {
         return userStorage.getAll();
     }
 
+    public void addFriend(int userId, int friendId) {
+        ValidationUtil.checkNotFound(userStorage.get(userId), userId);
+        ValidationUtil.checkNotFound(userStorage.get(friendId), friendId);
+        userStorage.addFriend(userId, friendId);
+    }
 
     private void checkNameEmpty(User user) {
-        if (user.getName() == null) {
+        String name = user.getName();
+        if (name == null || name.isBlank()) {
             user.setName(user.getLogin());
         }
     }

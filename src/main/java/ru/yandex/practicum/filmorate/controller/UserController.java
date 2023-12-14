@@ -44,7 +44,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User get(@RequestParam int id) {
+    public User get(@PathVariable int id) {
         log.info("Получен User c id={}", id);
         return userService.get(id);
     }
@@ -55,5 +55,10 @@ public class UserController {
         return userService.getAll();
     }
 
+    @PutMapping("/{userId}/friends/{friendId}")
+    public void addFriend(@PathVariable int userId, @PathVariable int friendId) {
+        log.debug("Добавление в друзья пользователя id={} друга с friendId={}", userId, friendId);
+        userService.addFriend(userId, friendId);
+    }
 
 }

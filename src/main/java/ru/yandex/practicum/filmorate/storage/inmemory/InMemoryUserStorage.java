@@ -40,6 +40,10 @@ public class InMemoryUserStorage implements UserStorage {
         return storage.get(id);
     }
 
+    public void addFriend(int userId, int friendId) {
+        storage.get(userId).getFriends().add(friendId);
+    }
+
     @Override
     public List<User> getAll() {
         return new ArrayList<>(storage.values());

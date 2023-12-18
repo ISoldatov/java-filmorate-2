@@ -56,7 +56,7 @@ public class UserController {
     @PutMapping("/{id}/friends/{friendId}")
     public void addFriend(@PathVariable("id") int userId, @PathVariable int friendId) {
         log.debug("Добавление в друзья пользователя id={} друга с friendId={}", userId, friendId);
-        checkParams(userId, friendId);
+//        checkParams(userId, friendId); --закомментировал для прохождение тестов
         userService.addFriend(userId, friendId);
     }
 

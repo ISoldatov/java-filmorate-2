@@ -6,11 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.util.ValidationUtil;
 
 import javax.validation.Valid;
 
 import java.util.List;
+
+import static ru.yandex.practicum.filmorate.util.ValidationUtil.*;
 
 @RestController
 @RequestMapping("/films")
@@ -27,20 +28,21 @@ public class FilmController {
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
         log.info("Добавлен Film c id={}", film.getId());
-        ValidationUtil.checkNew(film);
+        checkNew(film);
         return filmService.create(film);
     }
 
     @PutMapping
     public Film update(@Valid @RequestBody Film film) {
         log.info("Обновлен Film c id={}", film.getId());
-        ValidationUtil.checkNotNew(film);
+        checkNotNew(film);
         return filmService.update(film);
     }
 
     @GetMapping("/{id}")
     public Film get(@PathVariable int id) {
         log.info("Получен Film c id={}", id);
+        checkParams(id);
         return filmService.get(id);
     }
 
@@ -53,18 +55,21 @@ public class FilmController {
     @PutMapping("/{id}/like/{userId}")
     public void setLike(@PathVariable("id") int filmId, @PathVariable int userId) {
         log.debug("Фильму с id={} ставит like User c id={}", filmId, userId);
+        checkParams(filmId, userId);
         filmService.setLike(filmId, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void removeLike(@PathVariable("id") int filmId, @PathVariable int userId) {
         log.debug("Фильму id={} удаляет like User c id={}", filmId, userId);
+        checkParams(filmId, userId);
         filmService.removeLike(filmId, userId);
     }
 
     @GetMapping(value = {"/popular", "/popular?count={count}"})
     public List<Film> getPopFilms(@RequestParam(defaultValue = "10") int count) {
         log.debug("Получение {} самых популярных фильмов", count);
+        checkParams(count);
         return filmService.getPopFilms(count);
     }
 

@@ -56,7 +56,7 @@ public class UserController {
     @PutMapping("/{id}/friends/{friendId}")
     public void addFriend(@PathVariable("id") int userId, @PathVariable int friendId) {
         log.debug("Добавление в друзья пользователя id={} друга с friendId={}", userId, friendId);
-//        checkParams(userId, friendId); --закомментировал для прохождение тестов
+//        checkParams(userId, friendId); --закомментировал для прохождение тестов хотят код 404 а не 400.
         userService.addFriend(userId, friendId);
     }
 

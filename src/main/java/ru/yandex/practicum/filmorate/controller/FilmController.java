@@ -62,7 +62,7 @@ public class FilmController {
     @DeleteMapping("/{id}/like/{userId}")
     public void removeLike(@PathVariable("id") int filmId, @PathVariable int userId) {
         log.debug("Фильму id={} удаляет like User c id={}", filmId, userId);
-        checkParams(filmId, userId);
+//        checkParams(filmId, userId); закомментировал для тестов, хотят код 404 а не 400. Я же ловлю уже здесь отрицательные параметры
         filmService.removeLike(filmId, userId);
     }
 

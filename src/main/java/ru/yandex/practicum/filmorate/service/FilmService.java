@@ -4,11 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.util.ValidationUtil;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.yandex.practicum.filmorate.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
 public class FilmService {
@@ -25,11 +26,11 @@ public class FilmService {
     }
 
     public Film update(Film film) {
-        return ValidationUtil.checkNotFound(filmStorage.update(film), film.getId());
+        return checkNotFoundWithId(filmStorage.update(film), film.getId());
     }
 
     public Film get(int id) {
-        return ValidationUtil.checkNotFound(filmStorage.get(id), id);
+        return checkNotFoundWithId(filmStorage.get(id), id);
     }
 
     public List<Film> getAll() {
@@ -37,11 +38,13 @@ public class FilmService {
     }
 
     public void setLike(int filmId, int userId) {
-        filmStorage.get(filmId).getLikes().add(userId);
+        Film film = checkNotFoundWithId(filmStorage.get(filmId), filmId);
+        checkNotFoundWithId(film.getLikes().add(userId), userId);
     }
 
     public void removeLike(int filmId, int userId) {
-        filmStorage.get(filmId).getLikes().remove(userId);
+        Film film = checkNotFoundWithId(filmStorage.get(filmId), filmId);
+        checkNotFoundWithId(film.getLikes().remove(userId), userId);
     }
 
     public List<Film> getPopFilms(int count) {

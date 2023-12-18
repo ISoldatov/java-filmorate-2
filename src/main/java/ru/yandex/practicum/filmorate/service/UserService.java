@@ -28,11 +28,11 @@ public class UserService {
 
     public User update(User user) {
         checkNameEmpty(user);
-        return ValidationUtil.checkNotFound(userStorage.update(user), user.getId());
+        return ValidationUtil.checkNotFoundWithId(userStorage.update(user), user.getId());
     }
 
     public User get(int id) {
-        return ValidationUtil.checkNotFound(userStorage.get(id), id);
+        return ValidationUtil.checkNotFoundWithId(userStorage.get(id), id);
     }
 
     public List<User> getAll() {
@@ -40,21 +40,22 @@ public class UserService {
     }
 
     public void addFriend(int userId, int friendId) {
-        User user = ValidationUtil.checkNotFound(userStorage.get(userId), userId);
-        User friend = ValidationUtil.checkNotFound(userStorage.get(friendId), friendId);
+        User user = ValidationUtil.checkNotFoundWithId(userStorage.get(userId), userId);
+        User friend = ValidationUtil.checkNotFoundWithId(userStorage.get(friendId), friendId);
         user.getFriends().add(friendId);
         friend.getFriends().add(userId);
     }
 
     public void removeFriend(int userId, int friendId) {
-        User user = ValidationUtil.checkNotFound(userStorage.get(userId), userId);
-        User friend = ValidationUtil.checkNotFound(userStorage.get(friendId), friendId);
+        User user = ValidationUtil.checkNotFoundWithId(userStorage.get(userId), userId);
+        User friend = ValidationUtil.checkNotFoundWithId(userStorage.get(friendId), friendId);
         user.getFriends().remove(friendId);
         friend.getFriends().remove(userId);
     }
 
     public List<User> getFriends(int userId) {
-        return userStorage.get(userId).getFriends().stream().map(userStorage::get).collect(Collectors.toList());
+        User user = ValidationUtil.checkNotFoundWithId(userStorage.get(userId), userId);
+        return user.getFriends().stream().map(userStorage::get).collect(Collectors.toList());
     }
 
     public List<User> getCommFriends(int id, int otherId) {

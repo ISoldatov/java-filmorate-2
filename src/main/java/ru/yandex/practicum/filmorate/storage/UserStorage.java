@@ -15,6 +15,4 @@ public interface UserStorage {
 
     List<User> getAll();
 
-    void addFriend(int userId, int friendId);
-
 }

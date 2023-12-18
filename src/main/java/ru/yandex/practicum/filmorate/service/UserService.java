@@ -6,7 +6,13 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.util.ValidationUtil;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.fasterxml.jackson.databind.type.LogicalType.Collection;
 
 @Service
 public class UserService {
@@ -37,9 +43,32 @@ public class UserService {
     }
 
     public void addFriend(int userId, int friendId) {
-        ValidationUtil.checkNotFound(userStorage.get(userId), userId);
-        ValidationUtil.checkNotFound(userStorage.get(friendId), friendId);
-        userStorage.addFriend(userId, friendId);
+        User user = ValidationUtil.checkNotFound(userStorage.get(userId), userId);
+        User friend = ValidationUtil.checkNotFound(userStorage.get(friendId), friendId);
+        user.getFriends().add(friendId);
+        friend.getFriends().add(userId);
+    }
+
+    public void removeFriend(int userId, int friendId) {
+        User user = ValidationUtil.checkNotFound(userStorage.get(userId), userId);
+        User friend = ValidationUtil.checkNotFound(userStorage.get(friendId), friendId);
+        user.getFriends().remove(friendId);
+        friend.getFriends().remove(userId);
+    }
+
+    public List<User> getFriends(int userId) {
+        return userStorage.get(userId).getFriends().stream().map(userStorage::get).collect(Collectors.toList());
+    }
+
+    public List<User> getCommFriends(int id, int otherId) {
+        List<Integer> allFriendsBothUsers = Stream.of(userStorage.get(id).getFriends(), userStorage.get(otherId).getFriends())
+                .flatMap(java.util.Collection::stream)
+                .collect(Collectors.toList());
+        return allFriendsBothUsers.stream()
+                .filter((i -> Collections.frequency(allFriendsBothUsers, i) > 1))
+                .map(userStorage::get)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     private void checkNameEmpty(User user) {

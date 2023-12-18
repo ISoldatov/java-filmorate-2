@@ -8,11 +8,9 @@ import ru.yandex.practicum.filmorate.util.ValidationUtil;
 import ru.yandex.practicum.filmorate.util.exception.NotFoundException;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
@@ -38,10 +36,6 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User get(int id) {
         return storage.get(id);
-    }
-
-    public void addFriend(int userId, int friendId) {
-        storage.get(userId).getFriends().add(friendId);
     }
 
     @Override

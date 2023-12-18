@@ -1,16 +1,13 @@
 package ru.yandex.practicum.filmorate.storage.inmemory;
 
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
+
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
-import ru.yandex.practicum.filmorate.util.ValidationUtil;
-import ru.yandex.practicum.filmorate.util.exception.NotFoundException;
 
-import javax.validation.Valid;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+
 
 @Component
 public class InMemoryUserStorage implements UserStorage {

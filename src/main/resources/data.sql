@@ -11,4 +11,3 @@ VALUES (1,'comedy'),
 	   (3,'cartoon'),
 	   (4,'thriller'),
 	   (5,'action');
-

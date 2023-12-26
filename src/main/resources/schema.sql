@@ -16,8 +16,8 @@ CREATE TABLE users (
 );
 
 CREATE TABLE friends (
-	id_user INTEGER NOT NULL REFERENCES users (id),
-	id_friend INTEGER NOT NULL REFERENCES users (id),
+	id_user INTEGER NOT NULL REFERENCES users (id) ON DELETE RESTRICT,
+	id_friend INTEGER NOT NULL REFERENCES users (id) ON DELETE RESTRICT,
 	accept BOOLEAN DEFAULT FALSE,
 	CONSTRAINT friends_pk PRIMARY KEY (id_user, id_friend)
 );
@@ -33,13 +33,13 @@ CREATE TABLE films (
 	description varchar(200),	
 	release_date Date NOT NULL,
 	duration INTEGER,
-	mpa INTEGER NOT NULL REFERENCES mpa (id),
+	mpa INTEGER NOT NULL REFERENCES mpa (id) ON DELETE CASCADE,
 	CONSTRAINT constr_duration CHECK (duration>0)
 );
 
 CREATE TABLE likes (
-	id_film INTEGER NOT NULL REFERENCES films (id),
-	id_user INTEGER NOT NULL REFERENCES users (id),
+	id_film INTEGER NOT NULL REFERENCES films (id) ON DELETE CASCADE,
+	id_user INTEGER NOT NULL REFERENCES users (id) ON DELETE RESTRICT,
 	CONSTRAINT likes_pk PRIMARY KEY (id_film, id_user)
 );
 
@@ -49,8 +49,8 @@ CREATE TABLE genres (
 );
 
 CREATE TABLE film_genre (
-	id_film INTEGER NOT NULL REFERENCES films (id),
-	id_genre INTEGER NOT NULL REFERENCES genres (id),
+	id_film INTEGER NOT NULL REFERENCES films (id) ON DELETE CASCADE,
+	id_genre INTEGER NOT NULL REFERENCES genres (id) ON DELETE RESTRICT,
 	CONSTRAINT film_genre_pk PRIMARY KEY (id_film, id_genre)
 );
 

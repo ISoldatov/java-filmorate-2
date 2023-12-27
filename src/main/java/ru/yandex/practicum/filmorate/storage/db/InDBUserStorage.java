@@ -12,6 +12,8 @@ import java.sql.*;
 import java.util.List;
 import java.util.Objects;
 
+import static org.springframework.data.relational.core.query.Query.query;
+
 @Component("inDBUserStorage")
 public class InDBUserStorage implements UserStorage {
 
@@ -72,7 +74,13 @@ public class InDBUserStorage implements UserStorage {
         String sqlQuery = "SELECT id, email, login, name, birthday " +
                 "FROM Users " +
                 "WHERE id = ?";
-        return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
+//        return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
+        List<User> users = jdbcTemplate.query(sqlQuery, this::mapRowToUser, id);
+        if (users.isEmpty()) {
+            return null;
+        }
+        return users.get(0);
+
     }
 
     @Override
@@ -90,5 +98,6 @@ public class InDBUserStorage implements UserStorage {
                 .name(rs.getString("name"))
                 .birthday(rs.getDate("birthday").toLocalDate())
                 .build();
+
     }
 }

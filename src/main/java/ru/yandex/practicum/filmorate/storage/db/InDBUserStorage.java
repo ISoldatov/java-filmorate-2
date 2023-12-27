@@ -51,13 +51,14 @@ public class InDBUserStorage implements UserStorage {
                 "birthday = ? " +
                 "WHERE id = ?";
 
-        jdbcTemplate.update(sqlQuery
+        int numRow = jdbcTemplate.update(sqlQuery
                 , user.getEmail()
                 , user.getLogin()
                 , user.getName()
-                , Date.valueOf(user.getBirthday()));
+                , Date.valueOf(user.getBirthday())
+                , user.getId());
 
-        return user;
+        return numRow == 0 ? null : user;
     }
 
     @Override
@@ -77,7 +78,7 @@ public class InDBUserStorage implements UserStorage {
     @Override
     public List<User> getAll() {
         String sqlQuery = "SELECT id, email, login, name, birthday " +
-                          "FROM Users";
+                "FROM Users";
         return jdbcTemplate.query(sqlQuery, this::mapRowToUser);
     }
 

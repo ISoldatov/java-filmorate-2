@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FriendStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.util.ValidationUtil;
 
@@ -18,6 +19,9 @@ public class UserService {
     @Autowired
     @Qualifier("inDBUserStorage")
     private UserStorage userStorage;
+
+    @Autowired
+    private FriendStorage friendStorage;
 
     public User create(User user) {
         checkNameEmpty(user);
@@ -40,15 +44,13 @@ public class UserService {
     public void addFriend(int userId, int friendId) {
         User user = ValidationUtil.checkNotFoundWithId(userStorage.get(userId), userId);
         User friend = ValidationUtil.checkNotFoundWithId(userStorage.get(friendId), friendId);
-        user.getFriends().add(friendId);
-        friend.getFriends().add(userId);
+        friendStorage.addFriend(userId, friendId);
     }
 
     public void removeFriend(int userId, int friendId) {
         User user = ValidationUtil.checkNotFoundWithId(userStorage.get(userId), userId);
         User friend = ValidationUtil.checkNotFoundWithId(userStorage.get(friendId), friendId);
-        user.getFriends().remove(friendId);
-        friend.getFriends().remove(userId);
+        friendStorage.removeFriend(userId, friendId);
     }
 
     public List<User> getFriends(int userId) {

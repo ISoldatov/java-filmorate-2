@@ -33,9 +33,14 @@ public class Film extends AbstractBaseEntity {
     @Positive(message = "Продолжительность фильма должна быть положительным числом.")
     private int duration;
 
-    private Set<Integer> likes = new HashSet<>();
+    @NotNull(message="Рейтинг фильма обязателен")
+    private MPA mpa;
 
-    public int getCountLikes() {
-        return likes.size();
-    }
+    private Set<Genre> genres;
+
+//    private Set<Integer> likes;
+
+//    public int getCountLikes() {
+//        return likes.size();
+//    }
 }

@@ -74,13 +74,11 @@ public class InDBUserStorage implements UserStorage {
         String sqlQuery = "SELECT id, email, login, name, birthday " +
                 "            FROM Users " +
                 "           WHERE id = ?";
-//        return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
         List<User> users = jdbcTemplate.query(sqlQuery, this::mapRowToUser, id);
         if (users.isEmpty()) {
             return null;
         }
         return users.get(0);
-
     }
 
     @Override

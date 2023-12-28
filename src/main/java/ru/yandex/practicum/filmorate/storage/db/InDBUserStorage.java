@@ -72,8 +72,8 @@ public class InDBUserStorage implements UserStorage {
     @Override
     public User get(int id) {
         String sqlQuery = "SELECT id, email, login, name, birthday " +
-                "FROM Users " +
-                "WHERE id = ?";
+                "            FROM Users " +
+                "           WHERE id = ?";
 //        return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
         List<User> users = jdbcTemplate.query(sqlQuery, this::mapRowToUser, id);
         if (users.isEmpty()) {
@@ -90,7 +90,7 @@ public class InDBUserStorage implements UserStorage {
         return jdbcTemplate.query(sqlQuery, this::mapRowToUser);
     }
 
-    private User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
+    User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
         return User.builder()
                 .id(rs.getInt("id"))
                 .email(rs.getString("email"))

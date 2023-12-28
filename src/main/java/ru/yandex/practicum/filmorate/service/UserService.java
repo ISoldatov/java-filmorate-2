@@ -54,19 +54,21 @@ public class UserService {
     }
 
     public List<User> getFriends(int userId) {
-        User user = ValidationUtil.checkNotFoundWithId(userStorage.get(userId), userId);
-        return user.getFriends().stream().map(userStorage::get).collect(Collectors.toList());
+        return friendStorage.getFriends(userId);
+//        User user = ValidationUtil.checkNotFoundWithId(userStorage.get(userId), userId);
+//        return user.getFriends().stream().map(userStorage::get).collect(Collectors.toList());
     }
 
     public List<User> getCommFriends(int id, int otherId) {
-        List<Integer> allFriendsBothUsers = Stream.of(userStorage.get(id).getFriends(), userStorage.get(otherId).getFriends())
-                .flatMap(java.util.Collection::stream)
-                .collect(Collectors.toList());
-        return allFriendsBothUsers.stream()
-                .filter((i -> Collections.frequency(allFriendsBothUsers, i) > 1))
-                .map(userStorage::get)
-                .distinct()
-                .collect(Collectors.toList());
+        return friendStorage.getCommFriends(id, otherId);
+//        List<Integer> allFriendsBothUsers = Stream.of(userStorage.get(id).getFriends(), userStorage.get(otherId).getFriends())
+//                .flatMap(java.util.Collection::stream)
+//                .collect(Collectors.toList());
+//        return allFriendsBothUsers.stream()
+//                .filter((i -> Collections.frequency(allFriendsBothUsers, i) > 1))
+//                .map(userStorage::get)
+//                .distinct()
+//                .collect(Collectors.toList());
     }
 
     private void checkNameEmpty(User user) {

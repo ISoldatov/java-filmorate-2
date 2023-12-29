@@ -52,25 +52,25 @@ public class FilmController {
         return filmService.getAll();
     }
 
-//    @PutMapping("/{id}/like/{userId}")
-//    public void setLike(@PathVariable("id") int filmId, @PathVariable int userId) {
-//        log.debug("Фильму с id={} ставит like User c id={}", filmId, userId);
-//        checkParams(filmId, userId);
-//        filmService.setLike(filmId, userId);
-//    }
-//
-//    @DeleteMapping("/{id}/like/{userId}")
-//    public void removeLike(@PathVariable("id") int filmId, @PathVariable int userId) {
-//        log.debug("Фильму id={} удаляет like User c id={}", filmId, userId);
-////        checkParams(filmId, userId); закомментировал для тестов, хотят код 404 а не 400. Я же ловлю уже здесь отрицательные параметры
-//        filmService.removeLike(filmId, userId);
-//    }
+    @PutMapping("/{id}/like/{userId}")
+    public void setLike(@PathVariable("id") int filmId, @PathVariable int userId) {
+        log.debug("Фильму с id={} ставит like User c id={}", filmId, userId);
+        checkParams(filmId, userId);
+        filmService.setLike(filmId, userId);
+    }
 
-//    @GetMapping(value = {"/popular", "/popular?count={count}"})
-//    public List<Film> getPopFilms(@RequestParam(defaultValue = "10") int count) {
-//        log.debug("Получение {} самых популярных фильмов", count);
-//        checkParams(count);
-//        return filmService.getPopFilms(count);
-//    }
+    @DeleteMapping("/{id}/like/{userId}")
+    public void removeLike(@PathVariable("id") int filmId, @PathVariable int userId) {
+        log.debug("Фильму id={} удаляет like User c id={}", filmId, userId);
+//        checkParams(filmId, userId); закомментировал для тестов, хотят код 404 а не 400. Я же ловлю уже здесь отрицательные параметры
+        filmService.removeLike(filmId, userId);
+    }
+
+    @GetMapping(value = {"/popular", "/popular?count={count}"})
+    public List<Film> getPopFilms(@RequestParam(defaultValue = "10") int count) {
+        log.debug("Получение {} самых популярных фильмов", count);
+        checkParams(count);
+        return filmService.getPopFilms(count);
+    }
 
 }

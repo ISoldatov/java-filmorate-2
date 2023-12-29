@@ -7,9 +7,10 @@ import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.Bean;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class MPA {
-    private final int id;
+    private int id;
     private String name;
 
 }

@@ -39,8 +39,11 @@ public class InDBUserStorage implements UserStorage {
             return ps;
         }, keyHolder);
 
-        user.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
-
+        if (keyHolder.getKeys().size() > 1) {
+            user.setId((int) keyHolder.getKeys().get("id"));
+        } else {
+            user.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        }
         return user;
     }
 

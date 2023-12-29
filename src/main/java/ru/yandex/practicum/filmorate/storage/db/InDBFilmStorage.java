@@ -1,31 +1,32 @@
 package ru.yandex.practicum.filmorate.storage.db;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.MPA;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.LikeStorage;
+import ru.yandex.practicum.filmorate.storage.MPAStorage;
 
 import java.sql.*;
-import java.sql.Date;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Component("inDBFilmStorage")
 public class InDBFilmStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
+    private MPAStorage mpaStorage;
+
     @Autowired
-    public InDBFilmStorage(JdbcTemplate jdbcTemplate) {
+    public InDBFilmStorage(JdbcTemplate jdbcTemplate, MPAStorage mpaStorage) {
         this.jdbcTemplate = jdbcTemplate;
+        this.mpaStorage = mpaStorage;
     }
 
     @Override
@@ -81,13 +82,13 @@ public class InDBFilmStorage implements FilmStorage {
 
     @Override
     public Film get(int id) {
-        String sqlQuery = "SELECT f.id id, " +
-                "                 f.NAME naame, " +
-                "                 f.DESCRIPTION des, " +
-                "                 f.RELEASE_DATE r_date, " +
-                "                 f.DURATION dur " +
+        String sqlQuery = "SELECT f.id, " +
+                "                 f.NAME, " +
+                "                 f.DESCRIPTION, " +
+                "                 f.RELEASE_DATE, " +
+                "                 f.DURATION, " +
+                "                 f.mpa " +
                 "            FROM FILMS f " +
-                "           INNER JOIN mpa m ON m.ID =f.MPA " +
                 "           WHERE f.id=? ";
         List<Film> films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, id);
         if (films.isEmpty()) {
@@ -98,13 +99,13 @@ public class InDBFilmStorage implements FilmStorage {
 
     @Override
     public List<Film> getAll() {
-        String sqlQuery = "SELECT f.id id, " +
-                "                 f.NAME naame, " +
-                "                 f.DESCRIPTION des, " +
-                "                 f.RELEASE_DATE r_date, " +
-                "                 f.DURATION dur " +
-                "            FROM FILMS f " +
-                "           INNER JOIN mpa m ON m.ID =f.MPA ";
+        String sqlQuery = "SELECT f.id, " +
+                "                 f.NAME, " +
+                "                 f.DESCRIPTION, " +
+                "                 f.RELEASE_DATE, " +
+                "                 f.DURATION, " +
+                "                 f.mpa " +
+                "            FROM FILMS f ";
         return jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
     }
 
@@ -112,46 +113,16 @@ public class InDBFilmStorage implements FilmStorage {
         int id = rs.getInt("id");
         Film film = Film.builder()
                 .id(id)
-                .name(rs.getString("naame"))
-                .description(rs.getString("des"))
-                .releaseDate(rs.getDate("r_date").toLocalDate())
-                .duration(rs.getInt("dur"))
-//                .mpa(new MPA(rs.getInt("mpa"), rs.getString("mpa_title")))
-                .mpa(getMPA(id))
+                .name(rs.getString("name"))
+                .description(rs.getString("DESCRIPTION"))
+                .releaseDate(rs.getDate("RELEASE_DATE").toLocalDate())
+                .duration(rs.getInt("DURATION"))
+                .mpa(mpaStorage.getMpa(rs.getInt("mpa")))
                 .genres(getGenreFilm(id))
                 .likes(getLikesFilm(id))
                 .build();
         System.out.println(film);
         return film;
-    }
-
-    private MPA getMPA(int id) {
-        String sqlQuery = "SELECT m.id ," +
-                "                 m.title " +
-                "            FROM mpa m " +
-                "           INNER JOIN Films f ON f.mpa = m.id AND f.id =?";
-//        MPA mpa = jdbcTemplate.queryForObject(sqlQuery, new BeanPropertyRowMapper<MPA>(MPA.class), id);
-
-        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet(sqlQuery, id);
-
-        // обрабатываем результат выполнения запроса
-        if(mpaRows.next()) {
-            MPA mpa = new MPA(
-                    mpaRows.getInt("id"),
-                    mpaRows.getString("title"));
-
-
-//            log.info("Найден пользователь: {} {}", user.getId(), user.getNickname());
-
-            return mpa;
-        } else {
-//            log.info("Пользователь с идентификатором {} не найден.", id);
-            return null;
-        }
-
-
-//        return mpa;
-//        return jdbcTemplate.queryForObject(sqlQuery, new BeanPropertyRowMapper<MPA>(MPA.class), id);
     }
 
     private Set<Genre> getGenreFilm(int id) {
@@ -172,7 +143,7 @@ public class InDBFilmStorage implements FilmStorage {
                 "           WHERE l.ID_FILM =?";
 
         List<Integer> list = jdbcTemplate.query(sqlQuery,
-                (rs, rowNum) -> rs.getInt("id"), id);
+                (rs, rowNum) -> rs.getInt("ID_USER"), id);
         return new HashSet<>(list);
     }
 

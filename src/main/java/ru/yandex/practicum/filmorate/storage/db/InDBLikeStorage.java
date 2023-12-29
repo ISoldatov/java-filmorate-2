@@ -6,9 +6,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.LikeStorage;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Component
 public class InDBLikeStorage implements LikeStorage {
@@ -40,13 +38,13 @@ public class InDBLikeStorage implements LikeStorage {
 
     @Override
     public List<Film> getPopFilms(int count) {
-        String sqlQuery = "SELECT f.ID id, " +
-                "                 f.NAME naame, " +
-                "                 f.DESCRIPTION des , " +
-                "                 f.RELEASE_DATE r_date ," +
-                "                 f.DURATION dur " +
+        String sqlQuery = "SELECT f.ID, " +
+                "                 f.NAME, " +
+                "                 f.DESCRIPTION, " +
+                "                 f.RELEASE_DATE," +
+                "                 f.DURATION, " +
+                "                 f.mpa " +
                 "            FROM films f " +
-                "           LEFT JOIN likes l ON l.ID_FILM =f.ID " +
                 "        GROUP BY f.ID " +
                 "        ORDER BY COUNT(f.id) desc " +
                 "           LIMIT ?";

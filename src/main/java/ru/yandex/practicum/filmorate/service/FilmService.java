@@ -4,12 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.LikeStorage;
+import ru.yandex.practicum.filmorate.storage.MPAStorage;
+import ru.yandex.practicum.filmorate.util.ValidationUtil;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.util.ValidationUtil.checkNotFoundWithId;
 
@@ -22,6 +23,9 @@ public class FilmService {
 
     @Autowired
     private LikeStorage likeStorage;
+
+    @Autowired
+    private MPAStorage mpaStorage;
 
     public Film create(Film film) {
         return filmStorage.save(film);
@@ -55,4 +59,14 @@ public class FilmService {
     public List<Film> getPopFilms(int count) {
         return likeStorage.getPopFilms(count);
     }
+
+    public MPA getMpa(int id) {
+        return ValidationUtil.checkNotFoundWithId(mpaStorage.getMpa(id), id);
+    }
+
+    public List<MPA> getAllMpa() {
+        return mpaStorage.getAllMpa();
+    }
+
+
 }

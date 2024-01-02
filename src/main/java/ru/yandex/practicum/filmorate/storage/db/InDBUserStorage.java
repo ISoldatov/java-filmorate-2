@@ -12,8 +12,6 @@ import java.sql.*;
 import java.util.List;
 import java.util.Objects;
 
-import static org.springframework.data.relational.core.query.Query.query;
-
 @Component("inDBUserStorage")
 public class InDBUserStorage implements UserStorage {
 

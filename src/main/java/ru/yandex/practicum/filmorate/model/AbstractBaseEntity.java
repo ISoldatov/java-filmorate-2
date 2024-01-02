@@ -12,7 +12,6 @@ import javax.validation.constraints.Positive;
 public abstract class AbstractBaseEntity {
     @Positive
     protected Integer id;
-
     public boolean isNew() {
         return this.id == null;
     }

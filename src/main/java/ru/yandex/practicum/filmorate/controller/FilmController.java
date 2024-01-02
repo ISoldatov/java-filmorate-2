@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -82,6 +83,18 @@ public class FilmController {
     public List<MPA> getAllMpa() {
         log.debug("Получение всех типов рейтингов фильмов");
         return filmService.getAllMpa();
+    }
+
+    @GetMapping(value = "/genres/{id}")
+    public Genre getGenre(@PathVariable int id) {
+        return filmService.getGenre(id);
+    }
+
+    @GetMapping(value = "/genres")
+    public List<Genre> getAllGenres() {
+        log.debug("Получение всех жанров фильмов");
+        return filmService.getAllGenres();
+
     }
 
 

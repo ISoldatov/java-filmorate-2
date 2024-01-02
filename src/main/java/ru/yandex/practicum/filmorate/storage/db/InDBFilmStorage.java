@@ -1,32 +1,33 @@
 package ru.yandex.practicum.filmorate.storage.db;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.storage.FilmGenreStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.MPAStorage;
 
 import java.sql.*;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component("inDBFilmStorage")
 public class InDBFilmStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
-
     private MPAStorage mpaStorage;
+    private FilmGenreStorage filmGenreStorage;
+    private LikeStorage likeStorage;
 
-    @Autowired
-    public InDBFilmStorage(JdbcTemplate jdbcTemplate, MPAStorage mpaStorage) {
+    public InDBFilmStorage(JdbcTemplate jdbcTemplate, MPAStorage mpaStorage, FilmGenreStorage filmGenreStorage, LikeStorage likeStorage) {
         this.jdbcTemplate = jdbcTemplate;
         this.mpaStorage = mpaStorage;
+        this.filmGenreStorage = filmGenreStorage;
+        this.likeStorage = likeStorage;
     }
 
     @Override
@@ -50,6 +51,10 @@ public class InDBFilmStorage implements FilmStorage {
         } else {
             film.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
         }
+
+        film.getGenres().forEach(genre -> filmGenreStorage.setGenre(film.getId(), genre.getId()));
+        film.getLikes().forEach(like -> likeStorage.setLike(film.getId(), like));
+
         return film;
     }
 
@@ -71,7 +76,10 @@ public class InDBFilmStorage implements FilmStorage {
                 , film.getMpa().getId()
                 , film.getId());
 
-        return numRow == 0 ? null : film;
+        filmGenreStorage.updateGenre(film.getId(), film.getGenres());
+        likeStorage.updateLikes(film.getId(), film.getLikes());
+
+        return numRow == 0 ? null : get(film.getId());
     }
 
     @Override
@@ -81,7 +89,7 @@ public class InDBFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film get(int id) {
+    public Film get(int idFilm) {
         String sqlQuery = "SELECT f.id, " +
                 "                 f.NAME, " +
                 "                 f.DESCRIPTION, " +
@@ -90,11 +98,18 @@ public class InDBFilmStorage implements FilmStorage {
                 "                 f.mpa " +
                 "            FROM FILMS f " +
                 "           WHERE f.id=? ";
-        List<Film> films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, id);
+        List<Film> films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, idFilm);
+
+        Film film;
         if (films.isEmpty()) {
             return null;
+        } else {
+            film = films.get(0);
         }
-        return films.get(0);
+
+        film.setGenres(filmGenreStorage.getGenreFilm(idFilm));
+        film.setLikes(likeStorage.getLikesFilm(idFilm));
+        return film;
     }
 
     @Override
@@ -105,8 +120,23 @@ public class InDBFilmStorage implements FilmStorage {
                 "                 f.RELEASE_DATE, " +
                 "                 f.DURATION, " +
                 "                 f.mpa " +
-                "            FROM FILMS f ";
-        return jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
+                "            FROM FILMS f " +
+                "        ORDER BY f.id ASC";
+        List<Film> films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
+
+        films.forEach(f -> {
+            f.setGenres(filmGenreStorage.getGenreFilm(f.getId()));
+            f.setLikes(likeStorage.getLikesFilm(f.getId()));
+        });
+        return films;
+    }
+
+    @Override
+    public List<Film> getPopFilms(int count) {
+        List<Film> films = likeStorage.getPopFilms(count).stream()
+                .map(this::get)
+                .collect(Collectors.toList());
+        return films;
     }
 
     Film mapRowToFilm(ResultSet rs, int rowNum) throws SQLException {
@@ -118,33 +148,12 @@ public class InDBFilmStorage implements FilmStorage {
                 .releaseDate(rs.getDate("RELEASE_DATE").toLocalDate())
                 .duration(rs.getInt("DURATION"))
                 .mpa(mpaStorage.getMpa(rs.getInt("mpa")))
-                .genres(getGenreFilm(id))
-                .likes(getLikesFilm(id))
+                .genres(filmGenreStorage.getGenreFilm(id))
+                .likes(likeStorage.getLikesFilm(id))
                 .build();
         System.out.println(film);
         return film;
     }
 
-    private Set<Genre> getGenreFilm(int id) {
-        String sqlQuery = "SELECT g.ID ,g.NAME  " +
-                "            FROM film_genre fg " +
-                "           INNER JOIN genres g ON g.ID =fg.ID_GENRE " +
-                "           WHERE fg.ID_FILM= ?";
-
-        List<Genre> list = jdbcTemplate.query(sqlQuery,
-                (rs, rowNum) -> new Genre(rs.getInt("id"), rs.getString("name")), id
-        );
-        return new HashSet<>(list);
-    }
-
-    public Set<Integer> getLikesFilm(int id) {
-        String sqlQuery = "SELECT l.ID_USER  " +
-                "            FROM likes l " +
-                "           WHERE l.ID_FILM =?";
-
-        List<Integer> list = jdbcTemplate.query(sqlQuery,
-                (rs, rowNum) -> rs.getInt("ID_USER"), id);
-        return new HashSet<>(list);
-    }
 
 }

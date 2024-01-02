@@ -15,5 +15,7 @@ public interface FilmStorage {
 
     List<Film> getAll();
 
+    List<Film> getPopFilms(int count);
+
 
 }

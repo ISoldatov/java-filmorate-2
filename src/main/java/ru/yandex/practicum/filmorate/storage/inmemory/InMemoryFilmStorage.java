@@ -42,4 +42,8 @@ public class InMemoryFilmStorage implements FilmStorage {
         return new ArrayList<>(storage.values());
     }
 
+    public List<Film> getPopFilms(int count) {
+        return null;
+    }
+
 }

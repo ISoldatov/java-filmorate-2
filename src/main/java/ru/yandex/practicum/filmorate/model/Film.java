@@ -1,15 +1,16 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.relational.core.sql.In;
 import ru.yandex.practicum.filmorate.util.annotation.MinimumDate;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @SuperBuilder
@@ -36,7 +37,7 @@ public class Film extends AbstractBaseEntity {
     @NotNull(message = "Рейтинг фильма обязателен")
     private MPA mpa;
 
-    private Set<Genre> genres;
+    private List<Genre> genres = new ArrayList<>();
 
     private Set<Integer> likes = new HashSet<>();
 
